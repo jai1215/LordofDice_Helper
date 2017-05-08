@@ -234,7 +234,7 @@ function add_dicer_info(){
 }
 function start_lod(){
     console.log("start LOD");
-    var send_data = {move : 0};
+    var send_data = {move : -1};
     $.ajax({
         url:"/_run",
         type:"POST",
@@ -254,11 +254,28 @@ function start_lod(){
             $(newElement).attr('cx', s_x + x * (w + 10) + w/2).attr('cy', s_y + y * (h + 10) +h/2).attr('r', 10);
             $(newElement).attr("id", "master");
             $('#Main_Control').append(newElement);
+
+            var dicers = result["dicers"];
+            for(var i=0;i<dicers.length;i++){
+                var d = dicers[i];
+                var button_text = d[0] + d[1] + d[2] + "";
+                var new_delete_btn = $('<input type="button" class="form-control btn-default btn-sm" value="'+button_text+'">');
+                $(new_delete_btn).attr("id", "dicer_id"+i);
+                $(new_delete_btn).click(function() {
+                    var move_id = $(this).attr("id");
+                    console.log(move_id);
+                    console.log(move_id.replace('dicer_id',''));
+                    move_id = parseInt(move_id.replace('dicer_id',''));
+                    move_lod.call(this, move_id);
+                });
+                $('#control_button').append(new_delete_btn);
+            }
         }
+
     });
 }
-function move_lod(){
-    var send_data = {move : 1};
+function move_lod(move_id){
+    var send_data = {move : move_id};
     $.ajax({
         url:"/_run",
         type:"POST",
@@ -278,7 +295,6 @@ function move_lod(){
         }
     });
 }
-
 
 $(document).ready(function() {
     //draw_base_map();
