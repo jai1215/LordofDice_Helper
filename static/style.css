@@ -1,0 +1,66 @@
+rect{
+    fill: white;
+    fill-opacity: 1;
+    stroke: #c9c9c9;
+    stroke-width: 2px;
+}
+/*
+rect.dirRight{
+    fill: green;
+}
+rect.dirDown{
+    fill: #235b80;
+}
+rect.dirLeft{
+    fill: #807d35;
+}
+rect.dirUp{
+    fill: #803479;
+}*/
+rect.dirRight, rect.dirDown, rect.dirLeft, rect.dirUp {
+    fill: #949494;
+}
+rect.infoStartPoint {
+    fill: #38ff26;
+}
+rect.infoTelPoint{
+    fill: #8996ff;
+}
+rect.infoWall{
+    fill: #acacac;
+}
+rect.infoDonGo{
+    fill: #ff6c45;
+}
+rect.infoBoss{
+    fill: #030303;
+}
+rect:hover {
+    fill: red;
+    fill-opacity: 0.5;
+}
+polyline.dirUp{
+    transform: translate(0px, -25px);
+    transform-origin: 50% 50%;
+}
+polyline.dirRight{
+    transform:  rotate(90deg) translate(0, -25px) ;
+    transform-origin: 50% 50%;
+}
+polyline.dirDown{
+    transform: rotate(180deg) translate(0, -25px) ;
+    transform-origin: 50% 50%;
+}
+polyline.dirLeft{
+    transform: rotate(270deg) translate(0, -25px) ;
+    transform-origin: 50% 50%;
+}
+
+#master{
+    stroke: #c95753;
+    stroke-width: 2px;
+}
+
+input.btn-hide{
+    float: right;
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="kor">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!--link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"-->
+    <link rel="stylesheet" href="/static/style.css?q=1234">
+    </head>
+    <body>
+    <div class="container">
+    <h2>Table Test</h2>
+    <div class="col-md-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Map Picture
+                <input type="button" class="btn btn-default btn-sm btn-hide pull-right" id="hideMapPicture" value="Hide">
+            </div>
+            <div class="panel-body" id="panelMapPicture">
+                <svg id="Main_Control" class="center-block" width="400" height="400">
+                    <g id="mapInfo"></g>
+                    <g id="mapBase"></g>
+                </svg>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Guide
+                <input type="button" class="btn btn-default btn-sm btn-hide pull-right" id="hideGuide" value="Hide">
+            </div>
+            <div class="panel-body" id="panelGuide">
+                <ul>
+                    <li>Start Point : press <kbd>1</kbd></li>
+                    <li>Teleport Point : press <kbd>2</kbd></li>
+                    <li>Wall Point : press <kbd>3</kbd></li>
+                    <li>Danger Point : press <kbd>4</kbd></li>
+                    <li>Boss Point : press <kbd>5</kbd></li>
+                    <li>information Guide : 휠윈드<kbd>W</kbd>관통<kbd>K</kbd>근접<kbd>G</kbd>저격<kbd>J</kbd>마법<kbd>M</kbd>폭격<kbd>P</kbd>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Info
+                <input type="button" class="btn btn-default btn-sm btn-hide pull-right" id="hideInfo" value="Hide">
+            </div>
+            <div class="panel-body" id="panelInfo">
+                <table id="dicerInfo" class="table table-striped table-condensed">
+                    <tr>
+                        <th width="20%">Move1</th>
+                        <th width="35%">Type</th>
+                        <th width="30%">Attack</th>
+                        <th width="15%">Delete</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Options</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-group-sm">
+                            <label for="inputMapWidth">MAP width </label>
+                            <input type="text" class="form-control" id="inputMapWidth" value="12">
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label for="inputMapHeight">MAP height</label>
+                            <input type="text" class="form-control" id="inputMapHeight" value="9">
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <input type="button" class="form-control btn-default btn-sm" id="inputSaveButton" value="Save">
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <input type="button" class="form-control btn-default btn-sm" id="inputLoadButton" value="Load">
+                        </div>
+                        <div class="form-inline form-group form-group-sm">
+                            <label for="inputMapHeight">Info Add</label>
+                            <input type="text" class="form-control" id="inputDicer" placeholder="6 W 2000">
+                            <input type="button" class="btn btn-default btn-sm" id="inputDicerButton" value="Add Info">
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Control</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-group-sm">
+                            <input type="button" class="form-control btn-default btn-sm" id="inputStartButton" value="Start">
+                            <input type="button" class="form-control btn-default btn-sm" id="inputMoveButton" value="Move">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/script.js?q=1234"></script>
+</body>
+</html>
