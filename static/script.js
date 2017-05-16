@@ -248,7 +248,6 @@ function start_lod(){
             var h = 40;
             var x = result["move_data"][0];
             var y = result["move_data"][1];
-            console.log(x, y);
             console.log(result);
             var newElement = make_svg_element('circle');
             $(newElement).attr('cx', s_x + x * (w + 10) + w/2).attr('cy', s_y + y * (h + 10) +h/2).attr('r', 10);
@@ -258,21 +257,46 @@ function start_lod(){
             var dicers = result["dicers"];
             for(var i=0;i<dicers.length;i++){
                 var d = dicers[i];
-                var button_text = d[0] + d[1] + d[2] + "";
+                var button_text = d;
                 var new_delete_btn = $('<input type="button" class="form-control btn-default btn-sm" value="'+button_text+'">');
                 $(new_delete_btn).attr("id", "dicer_id"+i);
                 $(new_delete_btn).click(function() {
-                    var move_id = $(this).attr("id");
-                    console.log(move_id);
-                    console.log(move_id.replace('dicer_id',''));
-                    move_id = parseInt(move_id.replace('dicer_id',''));
-                    move_lod.call(this, move_id);
+                    move_lod.call(this, $(this).val());
                 });
                 $('#control_button').append(new_delete_btn);
             }
         }
 
     });
+}
+function xy_position(x, y){
+    var s_x = 20;
+    var s_y = 20;
+    var w = 40;
+    var h = 40;
+    var ret = [];
+    ret[0] = s_x + x * (w + 10);
+    ret[1] = s_y + y * (h + 10);
+    return ret;
+}
+function draw_attack_positions(positions){
+    var x_max = parseInt($("#inputMapWidth").val());
+    var y_max = parseInt($("#inputMapHeight").val());
+    console.log(positions);
+    $('.attack_position').remove();
+    for(var i=0;i<positions.length;i++){
+        var x = positions[i][0];
+        var y = positions[i][1];
+        if((x>=0)&(y>=0)&(x<x_max)&(y<y_max)) {
+            var pos = xy_position(x, y)
+            var img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/static/chat-01.svg');
+            $(img).attr("x", pos[0]).attr("y", pos[1]).attr("width", 40).attr("height", 40);
+            $(img).addClass("attack_position");
+            $('svg').append(img);
+        }
+    }
+
 }
 function move_lod(move_id){
     var send_data = {move : move_id};
@@ -287,11 +311,13 @@ function move_lod(move_id){
             var s_y = 20;
             var w = 40;
             var h = 40;
-            var x = result["move_data"][0];
-            var y = result["move_data"][1];
+            var x = result["move_data"]["new_pos"][0];
+            var y = result["move_data"]["new_pos"][1];
             console.log(x, y);
             console.log(result);
+            console.log(result["move_data"]);
             $('#master').attr('cx', s_x + x * (w + 10) + w/2).attr('cy', s_y + y * (h + 10) +h/2).attr('r', 10);
+            draw_attack_positions(result["move_data"]["attack_pos"]);
         }
     });
 }

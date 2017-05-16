@@ -1,71 +1,126 @@
-
-from Database import dbMap
-from Database import attack_range
+from Database import dbMap, dbDicer
+import random
 
 class Control:
     def __init__(self):
         self.database = {}
+        self.dbmap = 0
 
     def set_db(self, database):
-        self.database = database
-        self.dbmap = dbMap()
-        self.dbmap.set_size(self.database['mapSize'])
-        self.dbmap.set_map_data(self.database['mapData'])
-        self.master_pos = self.database["mapInfo"]["infoStartPoint"][0]
-        self.teleports = self.database["mapInfo"]["infoTelPoint"]
-        self.dicers = self.database["dicer"]
+        self.dbmap = dbMap(database['mapSize'], database['mapData'])
+        self.dbmap.set_boss(database["mapInfo"]["infoBoss"])
+        self.dbmap.set_wall(database["mapInfo"]["infoWall"])
+        self.dbmap.set_teleports(database["mapInfo"]["infoTelPoint"])
+        self.dicers = dbDicer(database["dicer"])
+        self.master_pos = database["mapInfo"]["infoStartPoint"][0]
 
     def get_start(self):
         return self.master_pos
 
-    def teleports_check(self):
-        length = int(len(self.teleports)/2)
-        for i in range(length):
-            m = self.master_pos
-            t = self.teleports[i*2]
-            if (m[0] == t[0])&(m[1] == t[1]):
-                return self.teleports[i*2+1]
-        return 0
+    def select_dicers(self):
+        #selection = random(set(range(self.dicers.length())), 6)
+        #print(selection)
+        #return self.dicers.set_selection(selection)
+        dicer = {
+            "name" : "아리오크",
+            "type" : "폭격",
+            "attack" : 3280,
+            "move" : 4,
+        }
+        self.dicers.add_dicer(dicer)
+        dicer = {
+            "name": "로키",
+            "type": "마법",
+            "attack": 2757,
+            "move": 4,
+        }
+        self.dicers.add_dicer(dicer)
+        dicer = {
+            "name": "비홀더",
+            "type": "휠윈드",
+            "attack": 2444,
+            "move": 2,
+            "charge" : 0.35,
+        }
+        self.dicers.add_dicer(dicer)
+        dicer = {
+            "name": "바루나",
+            "type": "휠윈드",
+            "attack": 2218,
+            "move": 5,
+            "charge" : 0.35,
+        }
+        self.dicers.add_dicer(dicer)
+        dicer = {
+            "name": "그라이프",
+            "type": "관통",
+            "attack": 2108,
+            "move": 3,
+            "charge" : 0.35,
+        }
+        self.dicers.add_dicer(dicer)
+        dicer = {
+            "name": "에드워드",
+            "type": "폭격",
+            "attack": 1807,
+            "move": 1,
+            "charge" : 0.30,
+        }
+        self.dicers.add_dicer(dicer)
+        return self.dicers.get_dicers()
 
-    def select_dicers(self, ret):
-        for i in range(6):
-            ret.append(self.dicers[i])
-        self.current_dicer = ret
+    def dicer_move(self, dicer):
+        ret = self.dicers.cal_dicer_move(dicer, self.master_pos, self.dbmap)
+        self.master_pos = ret["new_pos"]
+        return ret
 
-    def dicer_move(self, id):
-        id = int(id)
-        print(self.current_dicer[id][0])
-        self.check_attack_range(self.current_dicer[id][1])
-        return int(self.current_dicer[int(id)][0])
+    def dicer_move_etc(self, move):
+        ret = {}
+        ret["position"] = self.dicer_move_position(move)
+        attack_list = self.get_attack_range(type, self.master_pos)
+        ret["attack_list"] = []
+        for attack in attack_list:
+            if self.is_boss(attack):
+                ret["attack_list"].append(attack)
+                print("Hit ", attack)
+        return ret
 
-    def check_attack_range(self, type):
-        dir = self.dbmap.get_dir(self.master_pos)
-        at_range = attack_range[type]
-        def sum(a, b):
-            return [a[0]+b[0], a[1]+b[1]]
-        for i in range(len(at_range)):
-            print(dir, ":", at_range[i])
-            if dir == '1':
-                at = at_range[i]
-            elif dir == '2':
-                at = at_range[i]
-                at = [at[1], at[0]]
-                print("trans", at)
-            elif dir == '3':
-                at = at_range[i]
-                at = [-at[0], -at[1]]
-            elif dir == '4':
-                at = at_range[i]
-                at = [-at[1], -at[0]]
-            print(sum(self.master_pos, at))
+    def dicer_move_punch(self, move):
+        ret = {}
+        ret["attack_list"] = []
+        prev_pos = self.master_pos
+        for i in range(move):
+            new_pos = self.dbmap.next(prev_pos)
+            if self.dbmap.is_boss(new_pos):
+                ret["position"] = prev_pos
+                ret["attack_list"].append(new_pos)
+                return ret
+            prev_pos = new_pos
+        ret["position"] = new_pos
+        return ret
 
-    def next(self):
-        self.master_pos = self.dbmap.next(self.master_pos)
-        tel = self.teleports_check()
-        if tel :
-            self.master_pos = tel
+    def dicer_move_shoot(self, move):
+        ret = {}
+        ret["position"] = self.dicer_move_position(move)
+        ret["attack_list"] = []
+        prev_pos_4 = self.master_pos
+        for i in range(4):
+            prev_pos_4 = self.dbmap.prev(prev_pos_4)
+        prev_pos_5 = self.dbmap.prev(prev_pos_4)
 
-        return self.master_pos
+        next_pos_4 = self.master_pos
+        for i in range(4):
+            next_pos_4 = self.dbmap.next(next_pos_4)
+        next_pos_5 = self.dbmap.next(next_pos_4)
 
+        if prev_pos_5:
+            ret["attack_list"].append(prev_pos_5)
+        elif prev_pos_4:
+            ret["attack_list"].append(prev_pos_4)
+        elif next_pos_4:
+            ret["attack_list"].append(next_pos_4)
+        elif next_pos_5:
+            ret["attack_list"].append(next_pos_5)
+        return ret
 
 

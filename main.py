@@ -26,15 +26,14 @@ def loadData():
 def run():
     move = request.json["move"]
     print("move :", move)
-    dicers = []
     if move == -1:
         next_pos = control.get_start()
-        control.select_dicers(dicers)
+        dicers = control.select_dicers()
+        ret = {"move_data": next_pos, "dicers": dicers}
     else:
-        move = control.dicer_move(move)
-        for i in range(move):
-            next_pos = control.next()
-    ret = {"move_data": next_pos, "dicers": dicers}
+        next_pos = control.dicer_move(move)
+        ret = {"move_data": next_pos}
+
     print("return : ", ret)
     return jsonify(ret)
 
