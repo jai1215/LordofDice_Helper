@@ -29,6 +29,7 @@ def run():
     if move == -1:
         next_pos = control.get_start()
         dicers = control.select_dicers()
+        control.calculate_all()
         ret = {"move_data": next_pos, "dicers": dicers}
     else:
         next_pos = control.dicer_move(move)

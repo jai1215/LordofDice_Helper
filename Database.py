@@ -80,9 +80,12 @@ class dbMap:
 
 class dbDicer:
     def __init__(self, dicers):
-        self.dicers = dicers
         self.dicers = []
         pass
+
+    def initialize(self):
+        for d in self.dicers:
+            d.initialize()
 
     def length(self):
         return len(self.dicers)
@@ -115,7 +118,6 @@ class dbDicer:
 
     def get_dicers(self):
         ret = []
-        print(self.dicers)
         for d in self.dicers:
             ret.append(d.get_name())
         return ret
@@ -124,12 +126,22 @@ class dbDicer:
         for d in self.dicers:
             if d.get_name() == name:
                 return d
-        print("Cannot Fine dicer")
+        print("Cannot find dicer")
         return 0
+
+    def get_dicerID(self, id):
+        return self.dicers[id]
 
     def cal_dicer_move(self, dicer_name, pos, map):
         dicer = self.get_dicer(dicer_name)
+        dicer.use()
         return dicer.cal_move(pos, map)
+
+    def cal_dicerID_move(self, id, pos, map):
+        dicer = self.get_dicerID(id)
+        dicer.use()
+        return dicer.cal_move(pos, map)
+
 
 
 

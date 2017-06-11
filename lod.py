@@ -5,6 +5,7 @@ class Control:
     def __init__(self):
         self.database = {}
         self.dbmap = 0
+        self.score = 0
 
     def set_db(self, database):
         self.dbmap = dbMap(database['mapSize'], database['mapData'])
@@ -13,6 +14,9 @@ class Control:
         self.dbmap.set_teleports(database["mapInfo"]["infoTelPoint"])
         self.dicers = dbDicer(database["dicer"])
         self.master_pos = database["mapInfo"]["infoStartPoint"][0]
+
+    def initialize(self):
+        self.dicers.initialize()
 
     def get_start(self):
         return self.master_pos
@@ -26,6 +30,7 @@ class Control:
             "type" : "폭격",
             "attack" : 3280,
             "move" : 4,
+            "use_point" : 5
         }
         self.dicers.add_dicer(dicer)
         dicer = {
@@ -33,6 +38,7 @@ class Control:
             "type": "마법",
             "attack": 2757,
             "move": 4,
+            "use_point": 4
         }
         self.dicers.add_dicer(dicer)
         dicer = {
@@ -41,6 +47,7 @@ class Control:
             "attack": 2444,
             "move": 2,
             "charge" : 0.35,
+            "use_point": 4
         }
         self.dicers.add_dicer(dicer)
         dicer = {
@@ -49,6 +56,7 @@ class Control:
             "attack": 2218,
             "move": 5,
             "charge" : 0.35,
+            "use_point": 4
         }
         self.dicers.add_dicer(dicer)
         dicer = {
@@ -57,6 +65,7 @@ class Control:
             "attack": 2108,
             "move": 3,
             "charge" : 0.35,
+            "use_point": 4
         }
         self.dicers.add_dicer(dicer)
         dicer = {
@@ -65,14 +74,51 @@ class Control:
             "attack": 1807,
             "move": 1,
             "charge" : 0.30,
+            "use_point": 4
         }
         self.dicers.add_dicer(dicer)
+        self.initialize()
         return self.dicers.get_dicers()
+
+    def cal_damage(self, attack_point, attack_pos):
+        damage = 0
+        for p in attack_pos:
+            if self.dbmap.is_boss(p):
+                damage += attack_point
+        return damage
 
     def dicer_move(self, dicer):
         ret = self.dicers.cal_dicer_move(dicer, self.master_pos, self.dbmap)
+        damage = self.cal_damage(ret["attack"], ret["attack_pos"])
+        ret["damage"] = damage
+        print(damage)
         self.master_pos = ret["new_pos"]
         return ret
+
+    def calculate_all(self):
+        result = []
+        for i in range(6):
+            result += self.calculate(i, [])
+        print(result)
+
+    def calculate(self, id, list_all):
+        list_all.append(id)
+        if len(list_all) == 2:
+            return [list_all]
+        result = []
+        for i in range(6):
+            dicer = self.dicers.get_dicerID(i)
+            if dicer.available():
+                dicer.use()
+                result += self.calculate(i, list(list_all))
+        return result
+
+    def calculate1(self, id):
+        ret = self.dicers.cal_dicerID_move(id, self.master_pos, self.dbmap)
+        damage = self.cal_damage(ret["attack"], ret["attack_pos"])
+        print(id, damage)
+        for i in range(6):
+            self.calculate(self, i)
 
     def dicer_move_etc(self, move):
         ret = {}
@@ -82,7 +128,6 @@ class Control:
         for attack in attack_list:
             if self.is_boss(attack):
                 ret["attack_list"].append(attack)
-                print("Hit ", attack)
         return ret
 
     def dicer_move_punch(self, move):

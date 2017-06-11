@@ -39,7 +39,11 @@ attack_range = {
 class Dicer:
     def __init__(self, data):
         self.data = data
+        self.use_point = 0
         pass
+
+    def initialize(self):
+        self.use_point = self.data["use_point"]
 
     def get_name(self):
         return self.data["name"]
@@ -66,16 +70,22 @@ class Dicer:
         def sum(a, b):
             return [a[0]+b[0], a[1]+b[1]]
         for i in range(len(at_range)):
+            at = at_range[i]
             if dir == '1':
-                at = at_range[i]
+                pass
             elif dir == '2':
-                at = at_range[i]
                 at = [-at[1], at[0]]
             elif dir == '3':
-                at = at_range[i]
                 at = [-at[0], -at[1]]
             elif dir == '4':
-                at = at_range[i]
                 at = [at[1], -at[0]]
             ret.append(sum(pos, at))
         return ret
+
+    def use(self):
+        self.use_point -= 1
+
+    def available(self):
+        if self.use_point > 0:
+            return True
+        return False
